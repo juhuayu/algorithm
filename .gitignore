@@ -1,5 +1,6 @@
-*main.c
+main.c
 *.vcxproj
+*.user
 .vs/
 x64/
 x86/
