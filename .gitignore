@@ -1,4 +1,4 @@
 /use_c_c++/use_c_c++/main.c
 /use_c_c++/use_c_c++/use_c_c++.vcxproj
-use_c_c++/.vs/
-use_c_c++/use_c_c++/x64/
+use_c_c++/.vs
+use_c_c++/use_c_c++/x64
