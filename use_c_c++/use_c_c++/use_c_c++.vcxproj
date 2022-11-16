@@ -139,15 +139,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="base_easy.c" />
-    <ClCompile Include="base_hard.c" />
-    <ClCompile Include="base_often.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="seek.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base_easy.h" />
-    <ClInclude Include="base_hard.h" />
-    <ClInclude Include="base_often.h" />
+    <ClInclude Include="seek.h" />
+    <ClInclude Include="sort.c" />
+    <ClInclude Include="sort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
