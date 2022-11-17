@@ -1,3 +1,3 @@
 .vs
 .vscode
-use_c/**/*.exe
+use_cplus/**/*.exe
