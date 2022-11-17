@@ -1,4 +1,3 @@
 .vs
 .vscode
-*.exe
-!mingw-get-setup.exe
+use_c/**/*.exe
