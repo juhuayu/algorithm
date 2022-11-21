@@ -28,16 +28,10 @@ int maxArea(int* height, int heightSize) {
 int maxArea_ameliorate(int* height, int heightSize) {
   int i=0, j=heightSize-1, temp = 0, res_max = 0;
   while (i<j) {
-    temp = (j - i) * (height[i]<height[j]?height[i]:height[j]);
+    temp = (j - i) * (height[i]<height[j]?height[i++]:height[j--]);
     if (temp > res_max)
     {
       res_max = temp;
-    }
-    if (height[i] > height[j])
-    {
-      j--;
-    } else {
-      i++;
     }
   }
   return res_max;
