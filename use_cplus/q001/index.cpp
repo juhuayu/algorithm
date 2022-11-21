@@ -4,6 +4,7 @@ using namespace std;
 
 class Solution {
 public:
+    // C++
     // 执行用时： 404 ms , 在所有 C++ 提交中击败了 9.74% 的用户
     // 内存消耗： 9.9 MB , 在所有 C++ 提交中击败了 78.38% 的用户
     vector<int> twoSum(vector<int>& nums, int target) {
