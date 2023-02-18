@@ -71,6 +71,10 @@ public:
             }
         }
     }
+    void quickSort(int *arr, int len)
+    {
+        
+    }
 };
 
 int main()
