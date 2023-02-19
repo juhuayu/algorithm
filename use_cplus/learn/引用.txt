@@ -86,3 +86,21 @@ int main() {
     cout << res << endl;  // 打印1000，res是a的别名
     cout << res << endl;  // 打印1000
 }
+
+------------------------------------------------
+常量引用
+------------------------------------------------
+作用：用来修饰形参，防止误操作
+加上 const 之后变为只读
+
+int & ref = 10; // 引用必须引一块合法的内存空间
+const int & ref = 10; // 加上const之后，编译器将临时分配一个空间，代码修改为：int temp = 10; const int & ref = temp;
+
+void test(const int &ref) {
+    // 此时ref为只读，不可修改
+}
+
+int main() {
+    int a = 10;
+    test(a)
+}
