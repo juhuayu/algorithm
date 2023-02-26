@@ -3,8 +3,6 @@
 #include <vector>
 using namespace std;
 
-#define Node Node
-
 // 构建一个节点类
 class Node {
  public:
