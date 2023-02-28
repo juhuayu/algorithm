@@ -24,11 +24,16 @@ class LinkList {
   int isPalindromePlan3();         // 判断是不是回文  时间：O(N) 空间：O(1)
   void listPartition1(int pivot);  // 将单链表按某值划分成左边小，中间相等，右边大的形式  时间：O(N) 空间：O(N)
   void listPartition2(int pivot);  // 将单链表按某值划分成左边小，中间相等，右边大的形式  时间：O(N) 空间：O(1)
+
+  void creatLoopLinkList(int a, int b);  // 创建一个有环单链表
+
  private:
   Node* head;                                            // 头结点
   void arrPartition(vector<Node*>& nodeArr, int pivot);  // 单链表转数组以某一个值作划分
   void swap(vector<Node*>& nodeArr, int a, int b);       // 单链表转数组两节点交换
+  Node* getLoopNode();                                   // 找到链表的第一个入环节点，无环返回null
 };
+
 
 // 初始化单链表
 LinkList::LinkList() {
@@ -226,7 +231,7 @@ void LinkList::listPartition2(int pivot) {
   while (cur != NULL) {
     next = cur->next;
     cur->next = NULL;
-    if (cur->value < pivot) { // 小于划分值
+    if (cur->value < pivot) {  // 小于划分值
       if (sH == NULL) {
         sH = cur;
         sT = cur;
@@ -234,7 +239,7 @@ void LinkList::listPartition2(int pivot) {
         sT->next = cur;
         sT = cur;
       }
-    } else if (cur->value == pivot) { // 等于划分值
+    } else if (cur->value == pivot) {  // 等于划分值
       if (eH == NULL) {
         eH = cur;
         eT = cur;
@@ -242,7 +247,7 @@ void LinkList::listPartition2(int pivot) {
         eT->next = cur;
         eT = cur;
       }
-    } else { // 大于划分值
+    } else {  // 大于划分值
       if (mH == NULL) {
         mH = cur;
         mT = cur;
@@ -254,9 +259,9 @@ void LinkList::listPartition2(int pivot) {
     cur = next;
   }
   // 把小于区等于区大于区重连
-  if (sT != NULL) { // 如果有小于区
+  if (sT != NULL) {  // 如果有小于区
     sT->next = eH;
-    eT = eT == NULL ? sT : eT; // 下一步，谁去连大于区域的头，谁就变成eT
+    eT = eT == NULL ? sT : eT;  // 下一步，谁去连大于区域的头，谁就变成eT
   }
   if (eT != NULL) {
     eT->next = mH;
@@ -264,18 +269,72 @@ void LinkList::listPartition2(int pivot) {
   head = sH != NULL ? sH : (eH != NULL ? eH : mH);
 }
 
+// 找到链表的第一个入环节点，无环返回null
+Node* LinkList::getLoopNode() {
+  if (head == NULL || head->next == NULL || head->next->next == NULL)
+    return NULL;
+  Node* n1 = head->next;
+  Node* n2 = head->next->next;  // 定义快慢指针
+  while (n1 != n2) {            // 有环的话第一次相遇一定在环上
+    if (n2->next == NULL || n2->next->next == NULL) {
+      return NULL;
+    }
+    n2 = n2->next->next;
+    n1 = n1->next;
+  }
+  n2 = head;          // 快指针回到头部
+  while (n1 != n2) {  // 两个指针每次都走一步，再次相遇一定在入环节点位置
+    n1 = n1->next;
+    n2 = n2->next;
+  }
+  return n1;
+}
+// 创建一个有环单链表，环外有a个，环内有b个
+void LinkList::creatLoopLinkList(int a, int b) {
+  Node* temp = NULL;
+  for (int i = 1; i <= a; i++) {
+    Node* newNode = new Node;
+    newNode->value = i;
+    newNode->next = NULL;
+    if (temp == NULL) {
+      head->next = newNode;
+    } else {
+      temp->next = newNode;
+    }
+    temp = newNode;
+  }
+  Node* loopTemp = NULL;
+  for (int i = a; i <= b + a; i++) {
+    Node* newNode = new Node;
+    newNode->value = i;
+    newNode->next = NULL;
+    if (loopTemp == NULL) {
+      temp->next = newNode;
+    } else {
+      loopTemp->next = newNode;
+    }
+    loopTemp = newNode;
+  }
+  loopTemp->next = temp;
+}
+
 int main() {
-  LinkList linkList(1);
-  linkList.insertElemAtEnd(4);
-  linkList.insertElemAtEnd(3);
-  linkList.insertElemAtEnd(2);
-  linkList.insertElemAtEnd(7);
-  linkList.insertElemAtEnd(2);
-  linkList.insertElemAtEnd(4);
-  linkList.insertElemAtEnd(9);
-  // cout << linkList.isPalindromePlan3() << endl;
-  linkList.listPartition2(4);
-  linkList.printLinkList();
+  // LinkList linkList(1);
+  // linkList.insertElemAtEnd(4);
+  // linkList.insertElemAtEnd(3);
+  // linkList.insertElemAtEnd(2);
+  // linkList.insertElemAtEnd(7);
+  // linkList.insertElemAtEnd(2);
+  // linkList.insertElemAtEnd(4);
+  // linkList.insertElemAtEnd(9);
+  // // cout << linkList.isPalindromePlan3() << endl;
+  // linkList.listPartition2(4);
+  // linkList.printLinkList();
+
+  LinkList linkList(0);
+  linkList.creatLoopLinkList(3, 4);
+  // linkList.printLinkList();
+  cout << linkList.getLoopNode() << endl;
   system("pause");
   return 0;
 }
