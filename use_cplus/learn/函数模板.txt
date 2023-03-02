@@ -1,0 +1,67 @@
+template<class T>
+T test(T a, T b) {
+    return a+b;
+}
+
+int test(int a, int b) {    // 与上面模板发生重载
+    return a+b;
+}
+
+int normalTest(int a, int b){
+    return a+b;
+}
+
+void main() {
+    int a=10;
+    int b=20;
+    char c='a';
+    char d='b';
+
+    normalTest(a,b);   // √
+    normalTest(a,c);   // √  会将c转换为ASCII再进行运算
+
+    test(a,b);        // √  自动类型推导
+    test<int>(a,b);   // √  显示指定类型
+    test(a,c);        // ×  报错 -> 自动类型推导时不会隐式类型转换
+    test<int>(a,c);   // √  会将c转换为ASCII再进行运算 -> 可以发生隐式类型转换
+
+    // ------------------------------------------------------------------------
+
+    test(a,b);        // 调用普通 -> 优先使用普通函数
+    test<>(a,b);      // 调用模板 -> 空模板强制调用函数模板
+    test(c,d);        // 调用模板 -> 普通函数和模板都可以调用（普通函数需要转换，模板只需要推导）
+}
+
+关键字 template<class T>
+
+
+1. 普通函数调用可以发生隐式类型转换
+2. 函数模板 -> 用自动类型推导，不可以发生隐式类型转换
+3. 函数模板 -> 用显示指定类型，可以发生隐式类型转换
+
+调用时：
+4. 如果函数模板和普通函数都可以实现并调用，优先调用普通函数（与普通函数发生了重载）
+5. 可以通过空模板参数列表来强制调用函数模板
+6. 函数模板也可以发生重载
+7.如果函数模板可以产生更好的匹配，优先调用函数模板
+
+
+class Person {    // 自定义数据类型
+public:
+    Person(string name, int age) {
+        this->myName = name;
+        this->myAge = age;
+    }
+    string myName;
+    int myAge;
+}
+
+template<class T>
+bool compare(T &a, T &b) {...}
+
+template<> bool compare(Person &a, Person &b) {...}    // 具体化,传2个Person数据类型的会调这个模板函数
+
+
+局限性：
+8. 如果是自定义数据类型，需要特殊化处理（重载对应数据类型的模板函数）（还有一种解决方法是运算符重载）
+
