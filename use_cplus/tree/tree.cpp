@@ -1,5 +1,9 @@
 #include <iostream>
+#include <algorithm> // 主要使用 max() 函数
+#include <limits.h> // 主要使用系统最小值
 #include <stack>
+#include <list>
+#include <unordered_map>
 using namespace std;
 
 class Node {
@@ -26,11 +30,15 @@ class Tree {
   void inOrderUnRecur(Node* now);   // 非递归前序
   void posOrderUnRecur(Node* now);  // 非递归前序
 
+  void rowOrder(Node* now); // 层序
+
  public:
   Tree();
   ~Tree();
   void creatTree();
   void printTree(int i);
+  int getMaxWidthByHash(); // 求最大宽度（使用哈希表）
+  int getMaxWidth(); // 求最大宽度（仅使用有限几个变量）
 };
 
 Tree::Tree() {
@@ -73,6 +81,11 @@ void Tree::printTree(int i) {
       posOrderUnRecur(head);
       cout << endl;
     } break;
+    case 7: {
+      cout << "row:";
+      rowOrder(head);
+      cout << endl;
+    }
     default:
       break;
   }
@@ -155,10 +168,88 @@ void Tree::posOrderUnRecur(Node* now) {
     cout << st2.top()->value << "-";
     st2.pop();
   }
-  
-  
 }
-
+// 层序遍历
+void Tree::rowOrder(Node* now) {
+  if(now == nullptr) return;
+  list<Node*> nodeList; // 使用队列，先进先出
+  nodeList.push_back(now);
+  while (!nodeList.empty()) {
+    Node* cur = nodeList.front();
+    nodeList.pop_front(); // 出一个就打印，再把它的左右孩子进队
+    cout << cur->value << "-";
+    if(cur->left != nullptr) {
+      nodeList.push_back(cur->left);
+    }
+    if(cur->right != nullptr) {
+      nodeList.push_back(cur->right);
+    }
+  }
+}
+// 层序遍历 -> 求最大宽度（使用哈希表）
+int Tree::getMaxWidthByHash() {
+  if(head == nullptr) return 0;
+  Node* now = head;
+  list<Node*> nodeList;
+  nodeList.push_back(now);
+  unordered_map<Node*, int> levelMap;
+  levelMap.insert(pair<Node*, int>(now, 1));
+  int curLevel = 1; // 当前在哪一层
+  int curLevelNodes = 0; // 当前层发现了几个节点
+  int maxCount = INT_MIN;
+  while (!nodeList.empty()) {
+    Node* cur = nodeList.front();
+    nodeList.pop_front();
+    int curNodeLevel = levelMap.at(cur); // 查出该节点在第几层
+    if(curNodeLevel == curLevel) {
+      curLevelNodes++; // 同一层
+    } else {
+      maxCount = max(maxCount, curLevelNodes); // 来到了下一层，进行结算
+      curLevel++;
+      curLevelNodes = 1;
+    }
+    if(cur->left != nullptr) {
+      levelMap.insert(pair<Node*, int>(cur->left, curNodeLevel+1));
+      nodeList.push_back(cur->left);
+    }
+    if(cur->right != nullptr) {
+      levelMap.insert(pair<Node*, int>(cur->right, curNodeLevel+1));
+      nodeList.push_back(cur->right);
+    }
+  }
+  return maxCount;
+}
+// 层序遍历 -> 求最大宽度（仅使用有限几个变量）
+int Tree::getMaxWidth() {
+  if(head == nullptr) return 0;
+  Node* now = head;
+  list<Node*> nodeList;
+  nodeList.push_back(now);
+  Node* nodeCurEnd = now; // 当前层的最后一个节点
+  Node* nodeNextEnd = nullptr; // 下一层的最后一个节点
+  int curLevelNode = 0;
+  int maxCount = 0;
+  while (!nodeList.empty()) {
+    Node* cur = nodeList.front();
+    nodeList.pop_front();
+    if(cur->left != nullptr) {
+      nodeList.push_back(cur->left);
+      nodeNextEnd = cur->left;
+    }
+    if(cur->right != nullptr) {
+      nodeList.push_back(cur->right);
+      nodeNextEnd = cur->right; // nodeNextEnd 永远设置为最后一个进队列的
+    }
+    curLevelNode++;
+    if(cur == nodeCurEnd) { // 当前节点是不是本层最后一个节点
+      maxCount = max(maxCount, curLevelNode);
+      nodeCurEnd = nodeNextEnd; // 下一层最后一个节点给本层
+      nodeNextEnd = nullptr;
+      curLevelNode = 0;
+    }
+  }
+  return maxCount;
+}
 void Tree::creatTree() {
   /*
               1
@@ -187,8 +278,8 @@ void Tree::creatTree() {
 int main() {
   Tree tree;
   tree.creatTree();
-  tree.printTree(3);
-  tree.printTree(6);
+  cout << tree.getMaxWidth() << endl;
+  // tree.printTree(6);
   system("pause");
   return 0;
 }
