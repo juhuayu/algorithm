@@ -1,3 +1,7 @@
+/*
+寻找节点o1和o2的最低公共节点
+*/
+
 #include <iostream>
 #include <list>
 #include <unordered_map>
