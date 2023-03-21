@@ -28,6 +28,13 @@ class Node {
     nexts = * new vector<Node*>;
     edges = * new vector<Edge*>;
   }
+  Node() {
+    value = -1;
+    in = 0;
+    out = 0;
+    nexts = * new vector<Node*>;
+    edges = * new vector<Edge*>;
+  }
 };
 
 class Graph {

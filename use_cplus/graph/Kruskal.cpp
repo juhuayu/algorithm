@@ -1,7 +1,6 @@
 #include <algorithm>  // 使用sort函数
 #include <iostream>
 #include <list>
-#include <stack>
 #include <vector>
 #include "CreatGraph.cpp"
 using namespace std;
@@ -27,6 +26,7 @@ class MySet {
     list<Node*> &fromSet = setMap->at(from);
     list<Node*> &toSet = setMap->at(to);
 
+    // ============= 执行结果打印 =============
     cout << "form:  " << from->value << endl;
     cout << "to  :  " << to->value << endl;
     list<Node*>::iterator itrFrom = fromSet.begin();
@@ -41,6 +41,7 @@ class MySet {
     cout << endl;
     cout << (fromSet == toSet) << endl;
     cout << "----------------------------" << endl;
+    // ============= =========== =============
 
     return fromSet == toSet;
   }
@@ -93,7 +94,7 @@ class Kruskal {
 };
 
 int main() {
-  /*
+  /* 无向图
         A -- B -- C
         | \  |    |
         D -- E -- F
@@ -101,12 +102,21 @@ int main() {
   vector<vector<int>> arr = {
       {1, 2, 2},
       {2, 3, 7},
-      {1, 4, 4},
+      {1, 4, 3},
       {1, 5, 4},
       {2, 5, 1},
       {3, 6, 6},
-      {4, 5, 4},
+      {4, 5, 8},
       {5, 6, 5},
+
+      {2, 1, 2},
+      {3, 2, 7},
+      {4, 1, 3},
+      {5, 1, 4},
+      {5, 2, 1},
+      {6, 3, 6},
+      {5, 4, 8},
+      {6, 5, 5},
   };
 
   CreatGraph cg;
