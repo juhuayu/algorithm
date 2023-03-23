@@ -16,7 +16,13 @@ class Animal {
   // 1.无法实例化对象
   // 2.子类必须重写抽象类中的纯虚函数，否则也属于抽象类
   virtual void speak() = 0;
+
+  // 有了纯虚析构之后，这个类也属于抽象类，无法实例化对象
+  virtual ~Animal() = 0; // 纯虚析构（不加virtual的话析构时不会走子类的析构函数）
 };
+Animal::~Animal() {
+  // 就算是纯虚析构也需要写具体实现，因为父类也可能有数据开辟到堆区
+}
 // 猫类，继承动物类
 class Cat:public Animal {
   void speak() { // 改写父类函数的时候使虚函数指针指向子类的函数
@@ -51,6 +57,8 @@ int main() {
   Dog dog;
   doSpeak(dog);
 
+  // 父类指针在析构的时候，不会调用子类中的析构函数，导致子类如果右堆区属性，会出现内存泄漏
+  // 解决：在父类析构函数前加 virtual，变成虚析构
   Animal *anl = new Cat;
   anl->speak();
 
