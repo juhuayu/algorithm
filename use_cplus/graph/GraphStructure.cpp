@@ -35,6 +35,17 @@ class Node {
     nexts = * new vector<Node*>;
     edges = * new vector<Edge*>;
   }
+  Node(Node* node) {
+    value = node->value;
+    in = node->in;
+    out = node->out;
+    nexts = * new vector<Node*>(node->nexts);
+    edges = * new vector<Edge*>(node->edges);
+  }
+  ~Node() {
+    vector<Node*>().swap(nexts);
+    vector<Edge*>().swap(edges);
+  }
 };
 
 class Graph {
