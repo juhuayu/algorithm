@@ -1,0 +1,109 @@
+C++中的智能指针包括shared_ptr、unique_ptr、weak_ptr和auto_ptr，它们各自有不同的特点和使用场景。
+
+shared_ptr：共享式智能指针，可以有多个指针指向同一个对象，当最后一个指向对象的shared_ptr被销毁时，
+对象会被销毁3。它是C++11新添加的智能指针，限定的资源可以被多个指针共享1。只有指向动态分配的对象的
+指针才能交给shared_ptr对象托管1。如果有两个shared_ptr相互引用，那么这两个shared_ptr指针的引用计数
+永远不会下降为0，资源永远不会释放1。
+
+unique_ptr：独占式智能指针，每次只能有一个指针指向对象，当指针超出作用域时，对象会被自动销毁3。它由
+C++11引入，旨在替代不安全的auto_ptr2。unique_ptr是一种定义在<memory>中的智能指针。它持有对对象的
+独有权——两个unique_ptr不能指向一个对象，即unique_ptr不共享它的所管理的对象5。
+
+weak_ptr：弱引用智能指针，可以指向shared_ptr所管理的对象，但不会影响对象的生命周期，因此不会引起循
+环引用的问题3。weak_ptr是一种用于解决shared_ptr相互引用时产生死锁问题的智能指针1。
+
+auto_ptr：由C++98引入，定义在头文件<memory>。其功能和用法类似于unique_ptr，由new expression获得对
+象，在auto_ptr对象销毁时，他所管理的对象也会自动被delete掉2。虽然auto_ptr已被摒弃，但在实际项目中
+仍可使用，但建议使用更加安全的unique_ptr2。
+
+在使用这些智能指针时，需要注意的是，shared_ptr和weak_ptr可以相互转化，shared_ptr可以直接赋值给
+weak_ptr，weak_ptr也可以通过调用lock函数来获得shared_ptr1。而unique_ptr无法复制到其他unique_ptr，
+但是可以移动它5。auto_ptr在C++11开始，引入unique_ptr来替代auto_ptr2。
+
+具体的使用方法，可以参考以下代码示例：
+
+// shared_ptr的使用
+#include <iostream>
+#include <memory>
+#include <string>
+using namespace std;
+void fun() {
+    shared_ptr<string> pa(new string("CHN"));
+    shared_ptr<string> pb(new string("USA"));
+    cout << "*pa " << *pa << endl;
+    cout << "pa.use_count " << pa.use_count() << endl;
+    pa = pb;
+    cout << "*pa " << *pa << endl;
+    cout << "pa.use_count " << pa.use_count() << endl;
+    pa.reset();
+    pb.reset();
+}
+int main() {
+    fun();
+    return 0;
+}
+
+// unique_ptr的使用
+#include <iostream>
+#include <memory>
+using namespace std;
+int main() {
+    unique_ptr<int> u_i;
+    u_i.reset(new int(3));
+    unique_ptr<int> u_i2(new int(4));
+    int *p_i = u_i2.release();
+    return 0;
+}
+
+// weak_ptr的使用
+#include <iostream>
+#include <memory>
+#include <string>
+using namespace std;
+class B;
+class A {
+public:
+    weak_ptr<B> pb_weak;
+    ~A() { cout << "A delete\n"; }
+};
+class B {
+public:
+    shared_ptr<A> pa_;
+    ~B() { cout << "B delete\n"; }
+    void print() { cout << "This is B" << endl; }
+};
+void fun() {
+    shared_ptr<B> pb(new B());
+    shared_ptr<A> pa(new A());
+    pb->pa_ = pa;
+    pa->pb_weak = pb;
+    shared_ptr<B> p = pa->pb_weak.lock();
+    p->print();
+}
+int main() {
+    fun();
+    return 0;
+}
+
+// auto_ptr的使用
+#include <iostream>
+#include <string>
+#include <memory>
+using namespace std;
+int main() {
+    auto_ptr<string> films[5] ={
+        auto_ptr<string> (new string("Fowl Balls")),
+        auto_ptr<string> (new string("Duck Walks")),
+        auto_ptr<string> (new string("Chicken Runs")),
+        auto_ptr<string> (new string("Turkey Errors")),
+        auto_ptr<string> (new string("Goose Eggs"))
+    };
+    auto_ptr<string> pwin;
+    pwin = films[2];
+    cout << "The nominees for best avian baseballl film are\n";
+    for(int i = 0; i < 5; ++i) {
+        cout << *films[i] << endl;
+    }
+    cout << "The winner is " << *pwin << endl;
+    return 0;
+}
